@@ -2,13 +2,12 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get { req async in
-        "It works!"
+    let rawgService = RAWGService(app: app)
+
+    app.get("games") { req async throws -> GamesResponse in
+        let queryParams = try req.query.decode(GamesQueryParameters.self)
+        return try await rawgService.fetchGames(queryParams: queryParams)
     }
 
-    app.get("hello") { req async -> String in
-        "Hello, world!"
-    }
-
-    try app.register(collection: TodoController())
+    try app.register(collection: GamesController())
 }
